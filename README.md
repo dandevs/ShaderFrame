@@ -1,4 +1,4 @@
-# ImageEditorAI
+# ShaderFrame
 
 An AI-powered image editor built with Electron, React, React Three Fiber, and Fabric.js.
 

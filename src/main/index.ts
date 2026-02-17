@@ -15,7 +15,7 @@ function createWindow(): void {
       nodeIntegration: false,
       sandbox: false
     },
-    title: 'ImageEditorAI',
+    title: 'ShaderFrame',
     backgroundColor: '#1a1a1a'
   })
 

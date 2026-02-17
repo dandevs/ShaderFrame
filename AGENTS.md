@@ -1,4 +1,4 @@
-# ImageEditorAI - Agent Guidelines
+# ShaderFrame - Agent Guidelines
 
 This project is an AI-powered image editor built with Electron, React, React Three Fiber, Fabric.js, and cloud APIs (OpenAI). All development uses Bun as the package manager.
 

@@ -1,5 +1,5 @@
 {
-  "name": "image-editor-ai",
+  "name": "shaderframe",
   "version": "0.1.0",
   "description": "AI-powered image editor built with Electron, React, React Three Fiber, and Fabric.js",
   "main": "./out/main/index.js",
