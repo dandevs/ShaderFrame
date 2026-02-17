@@ -1,7 +1,7 @@
 {
   "name": "shaderframe",
   "version": "0.1.0",
-  "description": "AI-powered image editor built with Electron, React, React Three Fiber, and Fabric.js",
+  "description": "AI-powered image editor built with Electron, React, and React Three Fiber",
   "main": "./out/main/index.js",
   "author": "Your Name",
   "license": "MIT",
@@ -20,7 +20,8 @@
   "dependencies": {
     "@react-three/drei": "^9.105.4",
     "@react-three/fiber": "^8.16.2",
-    "fabric": "^5.3.0",
+    "@tanstack/react-router": "^1.160.2",
+    "@tanstack/router-plugin": "^1.160.2",
     "openai": "^4.28.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -1,6 +1,6 @@
 # ShaderFrame
 
-An AI-powered image editor built with Electron, React, React Three Fiber, and Fabric.js.
+An AI-powered image editor built with Electron, React, and React Three Fiber.
 
 ## Getting Started
 
@@ -42,6 +42,5 @@ bun run build
 
 ## Features
 
-- Canvas manipulation with Fabric.js
 - 3D rendering with React Three Fiber
 - AI integration via OpenAI

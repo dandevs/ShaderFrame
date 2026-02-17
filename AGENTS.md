@@ -1,6 +1,6 @@
 # ShaderFrame - Agent Guidelines
 
-This project is an AI-powered image editor built with Electron, React, React Three Fiber, Fabric.js, and cloud APIs (OpenAI). All development uses Bun as the package manager.
+This project is an AI-powered image editor built with Electron, React, React Three Fiber, and cloud APIs (OpenAI). All development uses Bun as the package manager.
 
 ## Development Commands
 
@@ -49,6 +49,7 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Avoid prop drilling - use Context or Zustand for global state
 - Memoize expensive operations with useMemo/useCallback
 - Component files: `ComponentName.tsx`
+- Use TanStack ecosystem (Router, Query, etc.) for React hooks and data management
 
 ### File Naming
 - Components: PascalCase - `CanvasEditor.tsx`, `LayersPanel.tsx`
@@ -77,13 +78,6 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Display user-friendly errors in UI, log details to console/electron-log
 - Wrap external API calls with error boundaries
 - Use Sentry or similar for error tracking in production
-
-### Fabric.js Canvas
-- Wrap Fabric.js in React component with refs
-- Use Fabric.js object events for interaction handling
-- Serialize canvas state to JSON for save/load
-- Keep canvas and React state synced when needed
-- Dispose canvas objects when components unmount
 
 ### React Three Fiber
 - Use `frameloop="demand"` for static scenes to save resources
