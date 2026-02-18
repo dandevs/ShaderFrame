@@ -9,12 +9,14 @@ export function Viewport() {
   useEffect(() => {
     if (!containerRef.current) return
 
+    const container = containerRef.current
+
     // Scene setup
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0x222222)
 
     // Camera setup - orthographic facing forward
-    const aspect = containerRef.current.clientWidth / containerRef.current.clientHeight
+    const aspect = container.clientWidth / container.clientHeight
     const frustumSize = 10
     const camera = new THREE.OrthographicCamera(
       frustumSize * aspect / -2,
@@ -29,9 +31,9 @@ export function Viewport() {
 
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setSize(containerRef.current.clientWidth, containerRef.current.clientHeight)
+    renderer.setSize(container.clientWidth, container.clientHeight)
     renderer.setPixelRatio(window.devicePixelRatio)
-    containerRef.current.appendChild(renderer.domElement)
+    container.appendChild(renderer.domElement)
 
     // Create a Layer positioned at center
     const layer = new Layer()
@@ -137,10 +139,10 @@ export function Viewport() {
 
     // Handle resize
     const handleResize = () => {
-      if (!containerRef.current) return
+      if (!container) return
 
-      const width = containerRef.current.clientWidth
-      const height = containerRef.current.clientHeight
+      const width = container.clientWidth
+      const height = container.clientHeight
       const aspect = width / height
 
       camera.left = frustumSize * aspect / -2
@@ -160,7 +162,7 @@ export function Viewport() {
       renderer.domElement.removeEventListener('mousemove', handleMouseMove)
       enteredAbortController?.abort()
       exitedAbortController?.abort()
-      containerRef.current?.removeChild(renderer.domElement)
+      container?.removeChild(renderer.domElement)
       renderer.dispose()
       boxGeometry.dispose()
       boxMaterial.dispose()
