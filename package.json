@@ -22,11 +22,11 @@
     "@react-three/fiber": "^8.16.2",
     "@tanstack/react-router": "^1.160.2",
     "@tanstack/router-plugin": "^1.160.2",
+    "mobx": "^6.15.0",
     "openai": "^4.28.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "three": "^0.163.0",
-    "zustand": "^4.5.2"
+    "three": "^0.163.0"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",

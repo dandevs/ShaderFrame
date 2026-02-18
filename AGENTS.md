@@ -46,7 +46,7 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Functional components only (no class components)
 - Use TypeScript interfaces for props: `interface Props { ... }`
 - Use React hooks for state and effects
-- Avoid prop drilling - use Context or Zustand for global state
+- Avoid prop drilling - use Context or MobX for global state
 - Memoize expensive operations with useMemo/useCallback
 - Component files: `ComponentName.tsx`
 - Use TanStack ecosystem (Router, Query, etc.) for React hooks and data management
