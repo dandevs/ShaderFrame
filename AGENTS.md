@@ -80,7 +80,7 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Use Sentry or similar for error tracking in production
 
 ### React Three Fiber
-- **Reference**: See [R3F.md](./R3F.md) for comprehensive API documentation (Canvas, Objects, Hooks, Events, TypeScript, Testing)
+- **Reference**: See [Editor Architecture](../renderer/components/Editor/AGENTS.md) for React Three Fiber patterns and architecture
 - Use `frameloop="demand"` for static scenes to save resources
 - Memoize geometries, materials, lights with useMemo
 - Use `useFrame` for animations, mutating values directly
