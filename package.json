@@ -18,34 +18,35 @@
     "test:unit": "vitest run"
   },
   "dependencies": {
-    "@react-three/drei": "9",
-    "@react-three/fiber": "8",
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
     "@tanstack/react-router": "^1.160.2",
     "@tanstack/router-plugin": "^1.160.2",
-    "@types/three": "^0.183.0",
+    "@types/three": "^0.182.0",
     "mobx": "^6.15.0",
     "openai": "^4.28.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "three": "^0.163.0"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "three": "^0.163.0",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^2.0.0",
     "@electron-toolkit/utils": "^4.0.0",
     "@types/node": "^20.11.30",
-    "@types/react": "^18.2.67",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
     "@typescript-eslint/parser": "^7.3.1",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^5.1.0",
     "@vitest/coverage-v8": "^1.4.0",
     "electron": "^29.1.5",
-    "electron-vite": "^2.1.0",
+    "electron-vite": "^5.0.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "typescript": "^5.4.3",
-    "vite": "^5.2.6",
+    "vite": "^7.3.1",
     "vitest": "^1.4.0"
   }
 }
