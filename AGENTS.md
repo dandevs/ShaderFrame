@@ -80,12 +80,15 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Use Sentry or similar for error tracking in production
 
 ### React Three Fiber
-- **Reference**: See [Editor Architecture](../renderer/components/Editor/AGENTS.md) for React Three Fiber patterns and architecture
+- **Reference**: 
+  - See [Editor Architecture](../renderer/components/Editor/AGENTS.md) for React Three Fiber patterns and architecture
+  - **Always check [React Three Fiber & Drei Documentation](../thirdparty/docs/AGENTS.md)** for up-to-date API usage and proper patterns
 - Use `frameloop="demand"` for static scenes to save resources
 - Memoize geometries, materials, lights with useMemo
 - Use `useFrame` for animations, mutating values directly
 - Import from `@react-three/fiber` and `@react-three/drei`
 - Dispose Three.js objects manually when unmounting if needed
+- **Before implementing new R3F/Drei features, consult the official docs** at `thirdparty/docs/AGENTS.md` for correct API usage and examples
 
 ### API Integration (OpenAI)
 - Store API keys in Electron safeStorage, never in env files or renderer
