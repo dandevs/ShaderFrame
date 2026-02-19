@@ -6,7 +6,7 @@ This document describes the architecture and patterns for the Editor component s
 
 The Editor is a 2D image editor built with:
 - **React** for UI components (Inspector, Viewport container)
-- **Plain Three.js** for rendering (NOT React Three Fiber)
+- **React Three Fiber (R3F)** for rendering
 - **Layer-based architecture** for managing compositional elements
 - **Handle system** for overlays, selections, and interactive controls
 
@@ -108,42 +108,44 @@ layer.drawHandle(highlightHandle, "exiting"); // Starts fade-out
 
 ### Viewport Component
 
-The Viewport uses plain Three.js (no React Three Fiber).
+The Viewport uses React Three Fiber (R3F) for rendering.
 
 **Setup Pattern:**
 ```typescript
-useEffect(() => {
-  // 1. Create scene, camera, renderer
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(...);
-  const renderer = new THREE.WebGLRenderer(...);
+import { Canvas } from '@react-three/fiber'
+import { Plane } from '@react-three/drei'
 
-  // 2. Add objects to scene
-  scene.add(mesh);
-
-  // 3. Start animation loop
-  const animate = () => {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  };
-  animate();
-
-  // 4. Cleanup on unmount
-  return () => {
-    renderer.dispose();
-    geometry.dispose();
-    material.dispose();
-  };
-}, []);
+export function Viewport() {
+  return (
+    <Canvas
+      camera={{ 
+        position: [0, 0, 5], 
+        zoom: 1,
+        type: 'OrthographicCamera',
+        left: -10,
+        right: 10,
+        top: 10,
+        bottom: -10,
+        near: 0.1,
+        far: 1000
+      }}
+      style={{ width: '100%', height: '100%', background: '#222' }}
+      frameloop="demand"
+    >
+      <Plane position={[0, 0, -5]}/>
+    </Canvas>
+  )
+}
 ```
 
 **Camera Setup:**
 - Uses `OrthographicCamera` for 2D image editing
 - Positioned at `z=5` facing forward (no perspective)
+- Use `frameloop="demand"` for static scenes to save resources
 - No camera controls at this time (static view)
 
 **Important:** Layers and handles should integrate with this rendering system. Future work will:
-- Connect Layer objects to Three.js scene graph
+- Connect Layer objects to R3F scene graph
 - Use Layer's `requestAnimationFrame` to trigger renders when needed
 - Draw handles as 3D objects in the scene (wireframes, controls)
 
@@ -175,28 +177,31 @@ Three.js uses 3D coordinates:
 ### React Components
 
 - Functional components only
-- Use `useRef` for Three.js objects
+- Use `useRef` for Three.js objects (via R3F's useThree hook)
 - Use `useEffect` for setup/cleanup
-- Proper cleanup in useEffect return function
+- Use `useMemo` for geometries and materials
+- Use `frameloop="demand"` for static scenes
 
 ### Three.js Object Lifecycle
 
+With R3F, Three.js objects are automatically disposed when components unmount. However, for manual cleanup or custom objects:
+
 **Always dispose:**
-1. Renderer on unmount
-2. Geometries when no longer needed
-3. Materials when no longer needed
-4. Textures when no longer needed
+1. Geometries when no longer needed
+2. Materials when no longer needed
+3. Textures when no longer needed
 
 **Pattern:**
 ```typescript
-// In useEffect cleanup
+// In useEffect cleanup (for custom objects not managed by R3F)
 return () => {
-  renderer.dispose();
   geometry.dispose();
   material.dispose();
   texture?.dispose();
 };
 ```
+
+R3F handles renderer disposal automatically.
 
 ### Animation Patterns
 

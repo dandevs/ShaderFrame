@@ -1,36 +1,25 @@
+import { OrbitControls, Plane, SpotLight } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
+import { Layer } from './Layer'
 
 export function Viewport() {
   return (
     <Canvas
-      camera={{ 
+      key='viewport-canvas'
+      camera={{
         position: [0, 0, 5], 
-        zoom: 1,
-        type: 'OrthographicCamera',
-        left: -10,
-        right: 10,
-        top: 10,
-        bottom: -10,
-        near: 0.1,
-        far: 1000
+        rotation: [0, 0, 0],
+        zoom: 100
       }}
+      orthographic
       style={{ width: '100%', height: '100%', background: '#222' }}
-      frameloop="demand"
+      frameloop='always'
     >
-      <SceneContent />
+      {/* <OrbitControls /> */}
+      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+      <spotLight position={[-10, -10, -10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
+      
+      <Layer/>
     </Canvas>
-  )
-}
-
-function SceneContent() {
-  return (
-    <>
-      <mesh>
-        {/* eslint-disable-next-line react/no-unknown-property */}
-        <planeGeometry args={[2, 2]} />
-        {/* eslint-disable-next-line react/no-unknown-property */}
-        <meshBasicMaterial color="#444" />
-      </mesh>
-    </>
   )
 }

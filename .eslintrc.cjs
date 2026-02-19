@@ -24,7 +24,8 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/no-explicit-any': 'warn',
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'react/no-unknown-property': 'off'
   },
   settings: {
     react: {

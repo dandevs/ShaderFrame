@@ -22,12 +22,13 @@
     "@react-three/fiber": "^9.0.0",
     "@tanstack/react-router": "^1.160.2",
     "@tanstack/router-plugin": "^1.160.2",
-    "@types/three": "^0.182.0",
+    "@types/three": "^0.183.0",
     "mobx": "^6.15.0",
+    "mobx-react-lite": "^4.1.1",
     "openai": "^4.28.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "three": "^0.163.0",
+    "three": "^0.183.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
