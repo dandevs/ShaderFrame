@@ -4,7 +4,7 @@ import { Handle } from "./Handle";
 const ANIMATION_DURATION = 300; // ms
 const WIREFRAME_COLOR = 0x00ff00;
 
-export class FrameHandle extends Handle {
+export class HighlightHandle extends Handle {
   #wireframe?: THREE.LineSegments;
   #material?: THREE.LineBasicMaterial;
   #alpha = 0;
@@ -25,7 +25,7 @@ export class FrameHandle extends Handle {
     // Create or update geometry
     if (!this.#wireframe) {
       const geometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1));
-      this.#material = new THREE.LineBasicMaterial({ 
+      this.#material = new THREE.LineBasicMaterial({
         color: WIREFRAME_COLOR,
         transparent: true,
         opacity: this.#alpha
@@ -47,6 +47,7 @@ export class FrameHandle extends Handle {
     this.#targetAlpha = 1.0;
     this.#animationStart = performance.now();
     this.#animationStartAlpha = this.#alpha;
+
     await this.animateAlpha(signal);
   }
 
@@ -54,6 +55,7 @@ export class FrameHandle extends Handle {
     this.#targetAlpha = 0.0;
     this.#animationStart = performance.now();
     this.#animationStartAlpha = this.#alpha;
+
     try {
       await this.animateAlpha(signal);
     } finally {

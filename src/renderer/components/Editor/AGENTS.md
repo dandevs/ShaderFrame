@@ -79,7 +79,7 @@ Abstract class for all handle types.
 - `onBoundsExited(signal: AbortSignal): Promise<void>` - Called when mouse exits handle bounds (abstract)
 - `onDraw(): void` - Draw the handle (abstract)
 
-### FrameHandle
+### HighlightHandle
 
 A handle that draws a frame/selection box around a layer.
 
@@ -96,12 +96,12 @@ A handle that draws a frame/selection box around a layer.
 **Usage Pattern:**
 ```typescript
 const layer = new Layer();
-const frameHandle = new FrameHandle(layer);
-layer.handles.push(frameHandle);
+const highlightHandle = new HighlightHandle(layer);
+layer.handles.push(highlightHandle);
 
 // Trigger animations via Layer's drawHandle method
-layer.drawHandle(frameHandle, "entering"); // Starts fade-in
-layer.drawHandle(frameHandle, "exiting"); // Starts fade-out
+layer.drawHandle(highlightHandle, "entering"); // Starts fade-in
+layer.drawHandle(highlightHandle, "exiting"); // Starts fade-out
 ```
 
 ## Three.js Integration
@@ -284,7 +284,7 @@ class Layer {
 ```
 Editor/
 ├── Handle.ts           # Abstract Handle class
-├── FrameHandle.ts      # FrameHandle implementation with wireframe and animations
+├── HighlightHandle.ts  # HighlightHandle implementation with wireframe and animations
 ├── Layer.ts            # Layer class with animation frame management
 ├── Viewport.tsx        # Three.js rendering component
 ├── Inspector.tsx       # React UI for properties

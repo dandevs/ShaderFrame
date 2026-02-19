@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { Layer } from './Layer'
-import { FrameHandle } from './FrameHandle'
+import { HighlightHandle } from './HighlightHandle'
+import { ResizeHandle } from './ResizeHandle'
 
 export function Viewport() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -45,9 +46,10 @@ export function Viewport() {
     // Layer position in world space
     const layerPosition = new THREE.Vector3(0, 0, 0)
 
-    // Create a FrameHandle for layer
-    const frameHandle = new FrameHandle(layer)
-    layer.handles.push(frameHandle)
+    // Create handles for layer
+    const highlightHandle = new HighlightHandle(layer)
+    const resizeHandle = new ResizeHandle(layer)
+    layer.handles.push(highlightHandle, resizeHandle)
 
     // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
@@ -102,6 +104,7 @@ export function Viewport() {
 
     // Track mouse state and abort controllers
     let isMouseOverLayer = false
+    let isDragging = false
     let enteredAbortController: AbortController | null = null
     let exitedAbortController: AbortController | null = null
 
@@ -112,13 +115,33 @@ export function Viewport() {
       const mouseY = event.clientY - rect.top
 
       const worldMouse = mouseToWorld(mouseX, mouseY)
+
+      // Update resize handle mouse position
+      resizeHandle.updateMousePosition(worldMouse)
+
+      // Handle dragging
+      if (isDragging) {
+        resizeHandle.onDrag(worldMouse)
+        // Update box mesh to match new layer size
+        boxMesh.scale.set(
+          layer.size.x / 2, // Original geometry was 2x2x0.1
+          layer.size.y / 2,
+          1
+        )
+        // Redraw both handles to update their positions after resize
+        highlightHandle.draw()
+        return
+      }
+
       const wasOverLayer = isMouseOverLayer
       isMouseOverLayer = isPointInLayerBounds(worldMouse)
 
       // Trigger handle when entering layer
       if (!wasOverLayer && isMouseOverLayer) {
         enteredAbortController = new AbortController()
-        frameHandle.triggerBoundsEntered(enteredAbortController.signal)
+        highlightHandle.triggerBoundsEntered(enteredAbortController.signal)
+        // Draw resize handle initially when entering layer
+        resizeHandle.draw()
       }
 
       // Trigger handle when exiting layer
@@ -131,11 +154,35 @@ export function Viewport() {
 
         // Start the exited animation with a new abort controller
         exitedAbortController = new AbortController()
-        frameHandle.triggerBoundsExited(exitedAbortController.signal)
+        highlightHandle.triggerBoundsExited(exitedAbortController.signal)
+      }
+    }
+
+    // Handle mouse down for drag start
+    const handleMouseDown = (event: MouseEvent) => {
+      const rect = renderer.domElement.getBoundingClientRect()
+      const mouseX = event.clientX - rect.left
+      const mouseY = event.clientY - rect.top
+
+      const worldMouse = mouseToWorld(mouseX, mouseY)
+
+      if (resizeHandle.startDrag(worldMouse)) {
+        isDragging = true
+      }
+    }
+
+    // Handle mouse up for drag end
+    const handleMouseUp = () => {
+      if (isDragging) {
+        resizeHandle.endDrag()
+        isDragging = false
       }
     }
 
     renderer.domElement.addEventListener('mousemove', handleMouseMove)
+    renderer.domElement.addEventListener('mousedown', handleMouseDown)
+    renderer.domElement.addEventListener('mouseup', handleMouseUp)
+    renderer.domElement.addEventListener('mouseleave', handleMouseUp)
 
     // Handle resize
     const handleResize = () => {
@@ -160,8 +207,12 @@ export function Viewport() {
     return () => {
       window.removeEventListener('resize', handleResize)
       renderer.domElement.removeEventListener('mousemove', handleMouseMove)
+      renderer.domElement.removeEventListener('mousedown', handleMouseDown)
+      renderer.domElement.removeEventListener('mouseup', handleMouseUp)
+      renderer.domElement.removeEventListener('mouseleave', handleMouseUp)
       enteredAbortController?.abort()
       exitedAbortController?.abort()
+      resizeHandle.dispose()
       container?.removeChild(renderer.domElement)
       renderer.dispose()
       boxGeometry.dispose()
