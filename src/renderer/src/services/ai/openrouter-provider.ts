@@ -9,7 +9,7 @@ import type {
 import type { ParsedShaderResult, ShaderUniform, UniformType } from '@renderer/types/shader'
 import { buildShaderSystemPrompt, buildShaderUserPrompt } from './shader-prompt'
 
-const DEFAULT_MODEL = 'anthropic/claude-sonnet-4'
+const DEFAULT_MODEL = 'google/gemini-flash-3'
 const DEFAULT_MAX_TOKENS = 4096
 const DEFAULT_TEMPERATURE = 0.7
 

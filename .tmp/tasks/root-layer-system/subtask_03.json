@@ -1,0 +1,33 @@
+{
+  "id": "root-layer-system-03",
+  "seq": "03",
+  "title": "ShaderLayerGroup: add transparent backing plane, click-to-select, PanHandle + ResizeHandle when selected",
+  "status": "pending",
+  "depends_on": ["01"],
+  "parallel": false,
+  "suggested_agent": "CoderAgent",
+  "context_files": ["C:\\Users\\Dan\\.opencode\\context\\core\\standards\\code-quality.md"],
+  "reference_files": [
+    "src/renderer/src/components/Viewport/ShaderLayerGroup.tsx",
+    "src/renderer/src/components/Viewport/PanHandle.tsx",
+    "src/renderer/src/components/Viewport/ResizeHandle.tsx",
+    "src/renderer/src/stores/ProjectStore.ts",
+    "src/renderer/src/types/layers.ts"
+  ],
+  "acceptance_criteria": [
+    "ShaderLayerGroup renders a <mesh> with <planeGeometry args={[1, 1]} /> scaled to layer.size.width × layer.size.height as the backing plane",
+    "The backing mesh uses meshBasicMaterial with transparent={true}, opacity={0}, depthWrite={false}",
+    "A useRef<Mesh>(null) (backingRef) is attached to the backing plane mesh via ref={backingRef}",
+    "Clicking the backing mesh calls uiStore.selectLayer(layer.id) with e.stopPropagation()",
+    "When uiStore.selectedLayerId === layer.id, <PanHandle> and <ResizeHandle> are rendered with meshRef={backingRef}, layerId={layer.id}, and appropriate onMove/onResize callbacks that call projectStore.updateLayer()",
+    "useUIStore is imported from @renderer/providers/StoreProvider",
+    "No files other than ShaderLayerGroup.tsx are modified",
+    "bun run typecheck passes with no new errors"
+  ],
+  "deliverables": [
+    "src/renderer/src/components/Viewport/ShaderLayerGroup.tsx — backing plane mesh + click-to-select + conditional PanHandle/ResizeHandle"
+  ],
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}

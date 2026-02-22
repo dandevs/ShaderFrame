@@ -1,10 +1,13 @@
-import { useMemo, useEffect, useRef } from 'react'
+import { useMemo, useEffect, useRef, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useThree } from '@react-three/fiber'
 import { ShaderMaterial } from 'three'
-import type { GroupLayer } from '@renderer/types/layers'
+import type { Mesh } from 'three'
+import type { GroupLayer, LayerId } from '@renderer/types/layers'
 import type { ShaderComponent, ShaderUniform } from '@renderer/types/shader'
-import { useProjectStore } from '@renderer/providers/StoreProvider'
+import { useProjectStore, useUIStore } from '@renderer/providers/StoreProvider'
+import { PanHandle } from './PanHandle'
+import { ResizeHandle } from './ResizeHandle'
 
 interface ShaderLayerGroupProps {
   layer: GroupLayer
@@ -67,16 +70,43 @@ function hexToVec3(hex: string): [number, number, number] {
  * Renders a group layer with an optional shader material overlay.
  * Children (image/text layers) are rendered normally inside the group.
  * If the group has enabled shader components, a shader overlay quad is rendered on top.
+ * A transparent backing plane provides click-to-select and drag handle support.
  */
 export const ShaderLayerGroup = observer(function ShaderLayerGroup({
   layer,
   renderOrder,
   children
 }: ShaderLayerGroupProps): React.JSX.Element | null {
-  if (!layer.visible) return null
-
   const projectStore = useProjectStore()
+  const isRoot = projectStore.rootLayerId === layer.id
+  if (!layer.visible && !isRoot) return null
+
+  const uiStore = useUIStore()
   const invalidate = useThree((state) => state.invalidate)
+  const backingRef = useRef<Mesh>(null!)
+  const isSelected = uiStore.selectedLayerId === layer.id
+
+  const handleSelect = useCallback(
+    (e: { stopPropagation: () => void }) => {
+      e.stopPropagation()
+      uiStore.selectLayer(layer.id)
+    },
+    [uiStore, layer.id]
+  )
+
+  const handleMove = useCallback(
+    (id: LayerId, position: { x: number; y: number }) => {
+      projectStore.updateLayer(id, { position })
+    },
+    [projectStore]
+  )
+
+  const handleResize = useCallback(
+    (id: LayerId, position: { x: number; y: number }, size: { width: number; height: number }) => {
+      projectStore.updateLayer(id, { position, size })
+    },
+    [projectStore]
+  )
 
   // Get enabled shader components
   const enabledComponents = layer.shaderComponents
@@ -91,6 +121,16 @@ export const ShaderLayerGroup = observer(function ShaderLayerGroup({
       position={[layer.position.x, layer.position.y, 0]}
       rotation={[0, 0, (layer.rotation * Math.PI) / 180]}
     >
+      {/* Transparent backing plane — enables click-to-select and drag handles */}
+      <mesh
+        ref={backingRef}
+        scale={[layer.size.width, layer.size.height, 1]}
+        onClick={handleSelect}
+      >
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial transparent={true} opacity={0} depthWrite={false} />
+      </mesh>
+
       {/* Render children (image/text layers) */}
       {children}
 
@@ -103,6 +143,14 @@ export const ShaderLayerGroup = observer(function ShaderLayerGroup({
           renderOrder={renderOrder + 1000}
           invalidate={invalidate}
         />
+      )}
+
+      {/* Pan and resize handles when this group is selected */}
+      {isSelected && (
+        <>
+          <PanHandle meshRef={backingRef} layerId={layer.id} onMove={handleMove} />
+          <ResizeHandle meshRef={backingRef} layerId={layer.id} onResize={handleResize} />
+        </>
       )}
     </group>
   )

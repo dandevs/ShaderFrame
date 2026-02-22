@@ -46,18 +46,24 @@ function renderLayerTree(layers: Layer[], baseOrder: number): React.JSX.Element[
 /** The main scene rendered inside the Canvas */
 const Scene = observer(function Scene(): React.JSX.Element {
   const projectStore = useProjectStore()
+  const uiStore = useUIStore()
+
+  const handleBackgroundClick = (): void => {
+    uiStore.selectLayer(null)
+  }
 
   return (
     <>
       <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={1} />
       <ViewportControls />
 
-      {/* Background grid pattern */}
+      {/* Background grid pattern — also acts as a click-to-deselect target */}
       <gridHelper
         args={[2000, 100, 0x444444, 0x222222]}
         rotation={[Math.PI / 2, 0, 0]}
         position={[0, 0, -1]}
         renderOrder={-1}
+        onClick={handleBackgroundClick}
       />
 
       {/* Render the layer tree */}
@@ -70,16 +76,6 @@ const Scene = observer(function Scene(): React.JSX.Element {
 export const Viewport = observer(function Viewport({
   className = ''
 }: ViewportProps): React.JSX.Element {
-  const uiStore = useUIStore()
-
-  const handleClick = (): void => {
-    // Deselect layer when clicking empty canvas area
-    // (actual layer selection will be handled by mesh click events later)
-  }
-
-  void handleClick
-  void uiStore
-
   return (
     <div className={`relative w-full h-full bg-surface-900 ${className}`}>
       <Canvas

@@ -52,9 +52,12 @@ export const LayerPanel = observer(function LayerPanel(): React.JSX.Element {
     setDragState({ dragId: null, targetId: null, position: null })
   }, [dragState, projectStore])
 
-  const handleAddGroup = useCallback(() => {
-    projectStore.createGroupLayer('New Group')
-  }, [projectStore])
+  const handleAddLayer = useCallback(() => {
+    const selectedId = uiStore.selectedLayerId
+    const selectedLayer = selectedId ? projectStore.findLayer(selectedId) : undefined
+    const parentId = selectedLayer && isGroupLayer(selectedLayer) ? selectedLayer.id : undefined
+    projectStore.createEmptyLayer('New Layer', parentId)
+  }, [projectStore, uiStore])
 
   const handleDelete = useCallback(() => {
     if (uiStore.selectedLayerId) {
@@ -99,8 +102,8 @@ export const LayerPanel = observer(function LayerPanel(): React.JSX.Element {
               <span className="text-xs">📷</span>
             </IconButton>
           </Tooltip>
-          <Tooltip content="Add Group" position="bottom">
-            <IconButton label="Add group" size="sm" onClick={handleAddGroup}>
+          <Tooltip content="Add Layer" position="bottom">
+            <IconButton label="Add layer" size="sm" onClick={handleAddLayer}>
               <span className="text-xs">📁</span>
             </IconButton>
           </Tooltip>
@@ -122,7 +125,7 @@ export const LayerPanel = observer(function LayerPanel(): React.JSX.Element {
         <div className="py-0.5">
           {projectStore.layers.length === 0 ? (
             <div className="px-3 py-8 text-center text-xs text-surface-400 dark:text-surface-500">
-              No layers yet. Import an image or add a group to get started.
+              No layers yet. Import an image or add a layer to get started.
             </div>
           ) : (
             projectStore.layers.map((layer) => (

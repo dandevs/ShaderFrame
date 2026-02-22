@@ -1,19 +1,20 @@
 import { RootState } from '@react-three/fiber'
 import { Mesh, MeshBasicMaterial, PlaneGeometry, Vector3 } from 'three'
 import { RefObject, useMemo } from 'react'
-import { useThreeScoped, withThreeDispose } from '../../utilities/hooks'
+import { useThreeScoped, withThreeDispose } from '@renderer/utilities/hooks'
 import { createDragHandler } from './createDragHandler'
+import type { LayerId } from '@renderer/types/layers'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** World-unit side length of each square corner handle. */
-export const HANDLE_SIZE = 0.2
+export const HANDLE_SIZE = 12
 /** Thickness of edge handles (the short/thin dimension). */
 const HANDLE_EDGE_THICKNESS = HANDLE_SIZE * 0.45
 /** Z offset so handles sit above the parent plane. */
-const HANDLE_Z_OFFSET = 0.1
+const HANDLE_Z_OFFSET = 0.5
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Corner configuration  (indices 0–3)
@@ -35,12 +36,6 @@ const CORNER_CURSORS = ['nwse-resize', 'nesw-resize', 'nwse-resize', 'nesw-resiz
 // Edge configuration  (indices 4–7)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Per-edge descriptor.
- *  - `axis`    – which world axis (x or y) the drag modifies
- *  - `sign`    – +1 for top/right edges, -1 for bottom/left edges
- *  - `cursor`  – CSS cursor string
- */
 interface EdgeDef {
   axis: 'x' | 'y'
   sign: 1 | -1
@@ -57,13 +52,26 @@ const EDGE_DEFS: EdgeDef[] = [
 const TOTAL_HANDLES = CORNER_SIGNS.length + EDGE_DEFS.length // 8
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ResizeHandle
-// Uses useThreeScoped + withThreeDispose to create 4 corner handle planes and
-// 4 edge handle planes entirely in plain Three.js (no R3F JSX).  Resources
-// are automatically disposed when the component unmounts.
+// Props
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
+export interface ResizeHandleProps {
+  meshRef: RefObject<Mesh>
+  layerId: LayerId
+  onResize: (
+    id: LayerId,
+    position: { x: number; y: number },
+    size: { width: number; height: number }
+  ) => void
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ResizeHandle
+// Ported from EditorTestBed – adapted to sync back to the MobX store via
+// `onResize`.  Holding Ctrl during a corner drag locks the aspect ratio.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function ResizeHandle({ meshRef, layerId, onResize }: ResizeHandleProps): null {
   const scopedCallback = useMemo(
     () => async (state: RootState, run: (action: (delta: number) => void) => Promise<void>) => {
       const target = meshRef.current
@@ -71,10 +79,8 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
 
       // ── GPU resources ───────────────────────────────────────────────
       using cornerGeo = withThreeDispose(new PlaneGeometry(HANDLE_SIZE, HANDLE_SIZE))
-      // Edge handles are 1×1 and scaled per-frame to fill the gap between corners.
       using edgeGeo = withThreeDispose(new PlaneGeometry(1, 1))
 
-      // One material per handle (corners + edges) for independent tinting.
       const materials = Array.from({ length: TOTAL_HANDLES }, () =>
         withThreeDispose(
           new MeshBasicMaterial({
@@ -84,28 +90,27 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
         )
       )
 
-      // Build corner meshes (0–3)
       const cornerHandles = CORNER_SIGNS.map((_, i) => {
         const mesh = new Mesh(cornerGeo, materials[i])
         mesh.renderOrder = 999
         return mesh
       })
 
-      // Build edge meshes (4–7)
       const edgeHandles = EDGE_DEFS.map((_, i) => {
         const mesh = new Mesh(edgeGeo, materials[CORNER_SIGNS.length + i])
-        mesh.renderOrder = 998 // below corners so corners always win ray-cast
+        mesh.renderOrder = 998
         return mesh
       })
 
       const allHandles = [...cornerHandles, ...edgeHandles]
 
-      // Attach everything to the scene so the plane's scale is not inherited.
       const sceneParent = target.parent!
       for (const mesh of allHandles) sceneParent.add(mesh)
 
       // ── Drag state ──────────────────────────────────────────────────
       const anchorWorld = new Vector3()
+      /** Aspect ratio captured at drag-start for Ctrl-lock. */
+      let dragStartAspect = 1
 
       const cleanupDrag = createDragHandler(state.gl.domElement, state.camera, allHandles, {
         getCursorForHandle(idx) {
@@ -114,8 +119,8 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
         },
 
         onDragStart(idx) {
-            if (idx < CORNER_SIGNS.length) {
-            // Corner: anchor is the diagonally opposite corner.
+          if (idx < CORNER_SIGNS.length) {
+            // Anchor = diagonally opposite corner
             const [ax, ay] = CORNER_SIGNS[(idx + 2) % 4]
             anchorWorld.set(
               target.position.x + ax * target.scale.x * 0.5,
@@ -123,17 +128,14 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
               target.position.z
             )
           } else {
-            // Edge: anchor is the midpoint of the opposite edge.
             const edge = EDGE_DEFS[idx - CORNER_SIGNS.length]
             if (edge.axis === 'y') {
-              // Top/Bottom – anchor is the centre of the opposite horizontal edge.
               anchorWorld.set(
                 target.position.x,
                 target.position.y + -edge.sign * target.scale.y * 0.5,
                 target.position.z
               )
             } else {
-              // Left/Right – anchor is the centre of the opposite vertical edge.
               anchorWorld.set(
                 target.position.x + -edge.sign * target.scale.x * 0.5,
                 target.position.y,
@@ -141,21 +143,38 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
               )
             }
           }
+          // Capture current aspect ratio (width / height) for Ctrl-lock
+          dragStartAspect = target.scale.y > 0 ? target.scale.x / target.scale.y : 1
           materials[idx].color.set(0xffcc00)
         },
 
-        onDrag(idx, worldPos) {
+        onDrag(idx, worldPos, _delta, event) {
           if (idx < CORNER_SIGNS.length) {
-            // ── Corner drag ────────────────────────────────────────────
+            // ── Corner drag ──────────────────────────────────────────
             const [sx, sy] = CORNER_SIGNS[idx]
-            const newX =
+            let newX =
               sx > 0
                 ? Math.max(worldPos.x, anchorWorld.x + 0.01)
                 : Math.min(worldPos.x, anchorWorld.x - 0.01)
-            const newY =
+            let newY =
               sy > 0
                 ? Math.max(worldPos.y, anchorWorld.y + 0.01)
                 : Math.min(worldPos.y, anchorWorld.y - 0.01)
+
+            // Ctrl held → lock aspect ratio using the dominant axis
+            if (event.ctrlKey && dragStartAspect > 0) {
+              const rawW = Math.abs(newX - anchorWorld.x)
+              const rawH = Math.abs(newY - anchorWorld.y)
+              if (rawW / rawH > dragStartAspect) {
+                // Width is dominant → constrain height
+                const constrainedH = rawW / dragStartAspect
+                newY = anchorWorld.y + sy * constrainedH
+              } else {
+                // Height is dominant → constrain width
+                const constrainedW = rawH * dragStartAspect
+                newX = anchorWorld.x + sx * constrainedW
+              }
+            }
 
             target.scale.set(
               Math.abs(newX - anchorWorld.x),
@@ -168,11 +187,9 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
               target.position.z
             )
           } else {
-            // ── Edge drag ──────────────────────────────────────────────
+            // ── Edge drag ────────────────────────────────────────────
             const edge = EDGE_DEFS[idx - CORNER_SIGNS.length]
-
             if (edge.axis === 'y') {
-              // Top or bottom edge: only Y changes; X and X-position are fixed.
               const newY =
                 edge.sign > 0
                   ? Math.max(worldPos.y, anchorWorld.y + 0.01)
@@ -180,7 +197,6 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
               target.scale.setY(Math.abs(newY - anchorWorld.y))
               target.position.setY((newY + anchorWorld.y) * 0.5)
             } else {
-              // Left or right edge: only X changes; Y and Y-position are fixed.
               const newX =
                 edge.sign > 0
                   ? Math.max(worldPos.x, anchorWorld.x + 0.01)
@@ -189,6 +205,13 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
               target.position.setX((newX + anchorWorld.x) * 0.5)
             }
           }
+
+          // Sync back to store after every drag tick
+          onResize(
+            layerId,
+            { x: target.position.x, y: target.position.y },
+            { width: target.scale.x, height: target.scale.y }
+          )
         },
 
         onDragEnd(idx) {
@@ -210,7 +233,6 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
           const hw = target.scale.x * 0.5
           const hh = target.scale.y * 0.5
 
-          // Update corner positions – corners are fixed-size geometry.
           for (let i = 0; i < CORNER_SIGNS.length; i++) {
             const [sx, sy] = CORNER_SIGNS[i]
             cornerHandles[i].position.set(
@@ -220,13 +242,9 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
             )
           }
 
-          // Gap length available between the two corners on each edge.
           const edgeW = Math.max(0, target.scale.x - 2 * HANDLE_SIZE)
           const edgeH = Math.max(0, target.scale.y - 2 * HANDLE_SIZE)
 
-          // Update edge positions and scale.
-          // Top (0) and Bottom (2) are horizontal → scale (edgeW, thickness).
-          // Right (1) and Left (3) are vertical   → scale (thickness, edgeH).
           const edgeScales: Array<[number, number]> = [
             [edgeW, HANDLE_EDGE_THICKNESS], // 4 – top
             [HANDLE_EDGE_THICKNESS, edgeH], // 5 – right
@@ -238,18 +256,15 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
             const edge = EDGE_DEFS[i]
             const mesh = edgeHandles[i]
             const [sw, sh] = edgeScales[i]
-
             mesh.scale.set(sw, sh, 1)
 
             if (edge.axis === 'y') {
-              // Top / Bottom: centred horizontally, at the top or bottom edge.
               mesh.position.set(
                 target.position.x,
                 target.position.y + edge.sign * hh,
                 target.position.z + HANDLE_Z_OFFSET
               )
             } else {
-              // Left / Right: centred vertically, at the left or right edge.
               mesh.position.set(
                 target.position.x + edge.sign * hw,
                 target.position.y,
@@ -259,14 +274,12 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
           }
         })
       } finally {
-        // ── Cleanup on unmount ─────────────────────────────────────────
         cleanupDrag()
         for (const mesh of allHandles) sceneParent.remove(mesh)
         for (const mat of materials) mat.dispose()
       }
-      // `using cornerGeo` and `using edgeGeo` → .dispose() called here automatically
     },
-    // meshRef is a stable ref object; the dep array is intentionally empty.
+    // meshRef and layerId are stable across the component's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )

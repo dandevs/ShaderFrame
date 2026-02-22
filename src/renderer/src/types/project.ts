@@ -1,4 +1,4 @@
-import type { Layer } from './layers'
+import type { Layer, GroupLayer } from './layers'
 import type { ShaderComponent } from './shader'
 
 /** Project metadata for identification and display */
@@ -30,6 +30,21 @@ export function generateId(): string {
 
 /** Create a new empty project with default settings */
 export function createDefaultProject(name: string = 'Untitled Project'): Project {
+  const rootLayer: GroupLayer = {
+    id: generateId(),
+    type: 'group',
+    name: 'Root',
+    position: { x: 0, y: 0 },
+    size: { width: 1920, height: 1080 },
+    children: [],
+    shaderComponents: [],
+    expanded: true,
+    visible: true,
+    locked: false,
+    opacity: 1,
+    rotation: 0,
+    zIndex: 0
+  }
   return {
     version: 1,
     metadata: {
@@ -39,7 +54,7 @@ export function createDefaultProject(name: string = 'Untitled Project'): Project
       updatedAt: Date.now(),
       canvasSize: { width: 1920, height: 1080 }
     },
-    layers: [],
+    layers: [rootLayer],
     shaderComponents: {}
   }
 }

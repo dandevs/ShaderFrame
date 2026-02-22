@@ -27,6 +27,17 @@ export const Toolbar = observer(function Toolbar(): React.JSX.Element {
     projectStore.createTextLayer('New Text')
   }, [projectStore, uiStore])
 
+  const handleAddLayer = useCallback(() => {
+    if (!projectStore.hasProject) {
+      projectStore.newProject()
+      uiStore.setShowHomeScreen(false)
+    }
+    const selectedId = uiStore.selectedLayerId
+    const selectedLayer = selectedId ? projectStore.findLayer(selectedId) : undefined
+    const parentId = selectedLayer && selectedLayer.type === 'group' ? selectedLayer.id : undefined
+    projectStore.createEmptyLayer('New Layer', parentId)
+  }, [projectStore, uiStore])
+
   const handleToggleTheme = useCallback(() => {
     themeStore.toggleTheme()
   }, [themeStore])
@@ -53,6 +64,12 @@ export const Toolbar = observer(function Toolbar(): React.JSX.Element {
       <Tooltip content="Add Text Layer" position="bottom">
         <IconButton label="Add text layer" size="md" onClick={handleAddText}>
           <span className="text-sm font-bold">T</span>
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip content="Add Layer" position="bottom">
+        <IconButton label="Add layer" size="md" onClick={handleAddLayer}>
+          <span className="text-sm">📁</span>
         </IconButton>
       </Tooltip>
 

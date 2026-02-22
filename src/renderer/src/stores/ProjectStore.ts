@@ -42,6 +42,16 @@ export class ProjectStore {
     return this.project?.layers ?? []
   }
 
+  get rootLayer(): GroupLayer | null {
+    const layers = this.project?.layers ?? []
+    const root = layers.find((layer): layer is GroupLayer => isGroupLayer(layer))
+    return root ?? null
+  }
+
+  get rootLayerId(): LayerId | null {
+    return this.rootLayer?.id ?? null
+  }
+
   /** Recursively find a layer by ID */
   findLayer(id: LayerId, layers: Layer[] = this.layers): Layer | undefined {
     for (const layer of layers) {
@@ -83,8 +93,9 @@ export class ProjectStore {
 
   addLayer(layer: Layer, parentId?: LayerId): void {
     if (!this.project) return
-    if (parentId) {
-      const parent = this.findLayer(parentId)
+    const resolvedParentId = parentId ?? this.rootLayerId ?? undefined
+    if (resolvedParentId) {
+      const parent = this.findLayer(resolvedParentId)
       if (parent && isGroupLayer(parent)) {
         parent.children.push(layer)
         return
@@ -199,6 +210,26 @@ export class ProjectStore {
       opacity: 1,
       position: { x: 0, y: 0 },
       size: { width: 400, height: 300 },
+      rotation: 0,
+      zIndex: this.layers.length,
+      children: [],
+      shaderComponents: [],
+      expanded: true
+    }
+    this.addLayer(layer, parentId)
+    return layer
+  }
+
+  createEmptyLayer(name: string, parentId?: LayerId): GroupLayer {
+    const layer: GroupLayer = {
+      id: generateId(),
+      type: 'group',
+      name,
+      visible: true,
+      locked: false,
+      opacity: 1,
+      position: { x: 0, y: 0 },
+      size: { width: 1920, height: 1080 },
       rotation: 0,
       zIndex: this.layers.length,
       children: [],

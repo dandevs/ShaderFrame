@@ -40,6 +40,7 @@ export const LayerTreeItem = observer(function LayerTreeItem({
   const isSelected = uiStore.selectedLayerId === layer.id
   const isGroup = isGroupLayer(layer)
   const isExpanded = isGroup && layer.expanded
+  const isRoot = projectStore.rootLayerId === layer.id
 
   useEffect(() => {
     if (isRenaming && inputRef.current) {
@@ -78,6 +79,14 @@ export const LayerTreeItem = observer(function LayerTreeItem({
       projectStore.updateLayer(layer.id, { visible: !layer.visible })
     },
     [projectStore, layer.id, layer.visible]
+  )
+
+  const handleAddChild = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      projectStore.createEmptyLayer('New Layer', layer.id)
+    },
+    [projectStore, layer.id]
   )
 
   const toggleExpand = useCallback(
@@ -181,15 +190,31 @@ export const LayerTreeItem = observer(function LayerTreeItem({
           </span>
         )}
 
+        {/* Add child layer button — groups only, visible on hover */}
+        {isGroup && (
+          <IconButton
+            label="Add child layer"
+            size="sm"
+            onClick={handleAddChild}
+            className="opacity-0 group-hover:opacity-100 hover:!opacity-100"
+          >
+            <span className="text-[10px]">+</span>
+          </IconButton>
+        )}
+
         {/* Visibility toggle */}
-        <IconButton
-          label={layer.visible ? 'Hide layer' : 'Show layer'}
-          size="sm"
-          onClick={toggleVisibility}
-          className="opacity-0 group-hover:opacity-100 hover:!opacity-100"
-        >
-          <span className="text-[10px]">{layer.visible ? '👁' : '👁‍🗨'}</span>
-        </IconButton>
+        {isRoot ? (
+          <span className="w-6 h-6" />
+        ) : (
+          <IconButton
+            label={layer.visible ? 'Hide layer' : 'Show layer'}
+            size="sm"
+            onClick={toggleVisibility}
+            className="opacity-0 group-hover:opacity-100 hover:!opacity-100"
+          >
+            <span className="text-[10px]">{layer.visible ? '👁' : '👁‍🗨'}</span>
+          </IconButton>
+        )}
       </div>
 
       {/* Render children if expanded group */}

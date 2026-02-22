@@ -1,0 +1,30 @@
+{
+  "id": "root-layer-system-02",
+  "seq": "02",
+  "title": "LayerPanel: rename 'Add Group' to 'Add Layer' and add per-row child '+' button on LayerTreeItem",
+  "status": "pending",
+  "depends_on": [],
+  "parallel": true,
+  "suggested_agent": "CoderAgent",
+  "context_files": ["C:\\Users\\Dan\\.opencode\\context\\core\\standards\\code-quality.md"],
+  "reference_files": [
+    "src/renderer/src/components/LayerPanel/LayerPanel.tsx",
+    "src/renderer/src/components/LayerPanel/LayerTreeItem.tsx",
+    "src/renderer/src/stores/ProjectStore.ts"
+  ],
+  "acceptance_criteria": [
+    "LayerPanel toolbar button previously labelled 'Add Group' (tooltip and aria-label) is now labelled 'Add Layer'; it calls projectStore.createEmptyLayer() instead of createGroupLayer()",
+    "When a GroupLayer is selected, 'Add Layer' creates the new layer as a child of the selected group (passes selectedLayerId as parentId); otherwise creates at root (no parentId)",
+    "LayerTreeItem shows a small '+' icon button that is only visible on hover (opacity-0 group-hover:opacity-100 pattern) for group-type rows",
+    "Clicking the '+' button on a group row calls projectStore.createEmptyLayer('New Layer', layer.id) and stops event propagation so it does not trigger row selection",
+    "No files other than LayerPanel.tsx and LayerTreeItem.tsx are modified",
+    "bun run typecheck passes with no new errors"
+  ],
+  "deliverables": [
+    "src/renderer/src/components/LayerPanel/LayerPanel.tsx — 'Add Layer' button wired to createEmptyLayer with parent awareness",
+    "src/renderer/src/components/LayerPanel/LayerTreeItem.tsx — '+' child-add button on hover for group rows"
+  ],
+  "started_at": null,
+  "completed_at": null,
+  "completion_summary": null
+}
