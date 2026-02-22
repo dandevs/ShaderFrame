@@ -1,4 +1,6 @@
-out/
-node_modules/
-.tanstack/
-**/*.gen.ts
+out
+dist
+pnpm-lock.yaml
+LICENSE.md
+tsconfig.json
+tsconfig.*.json

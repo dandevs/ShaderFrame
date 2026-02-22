@@ -14,7 +14,7 @@ bun run preview                # Preview production build
 
 ### Linting & Type Checking
 ```bash
-bun run lint                   # Run ESLint
+bun run lint                  # Run ESLint
 bun run lint:fix              # Fix ESLint issues automatically
 bun run typecheck             # Run TypeScript type checking
 ```
@@ -65,13 +65,6 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Always use contextIsolation in browser window config
 - Expose minimal API via contextBridge: `electronAPI.openFile()`
 
-### IPC Communication
-- Use ipcMain.handle/ipcRenderer.invoke for async operations
-- Type IPC channels as constants: `IPC_CHANNELS.ts`
-- Validate all inputs in main process before processing
-- Return structured errors: `{ success: false, error: string }`
-- Never send sensitive data (API keys) to renderer
-
 ### Error Handling
 - Use try/catch for async operations with proper error logging
 - Create custom error types: `class AIError extends Error { ... }`
@@ -80,9 +73,8 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Use Sentry or similar for error tracking in production
 
 ### React Three Fiber
-- **Reference**: 
-  - See [Editor Architecture](../renderer/components/Editor/AGENTS.md) for React Three Fiber patterns and architecture
-  - **Always check [React Three Fiber & Drei Documentation](../thirdparty/docs/AGENTS.md)** for up-to-date API usage and proper patterns
+- **Reference**:
+- **Always check [React Three Fiber & Drei Documentation](thirdparty/docs/AGENTS.md)** for up-to-date API usage and proper patterns
 - Use `frameloop="demand"` for static scenes to save resources
 - Memoize geometries, materials, lights with useMemo
 - Use `useFrame` for animations, mutating values directly
@@ -103,12 +95,6 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Sanitize all user inputs before processing
 - Validate IPC messages with zod or similar
 - Keep dependencies updated regularly
-
-### Git Workflow
-- Feature branches: `feature/ai-shader-generation`
-- Commit messages: conventional commits - `feat: add shader chat UI`
-- PR descriptions must include testing performed
-- All PRs must pass lint, typecheck, and tests before merge
 
 ### Performance
 - Generate thumbnails for large images

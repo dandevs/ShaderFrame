@@ -1,46 +1,34 @@
-# ShaderFrame
+# electron-app
 
-An AI-powered image editor built with Electron, React, and React Three Fiber.
+An Electron application with React and TypeScript
 
-## Getting Started
+## Recommended IDE Setup
 
-### Prerequisites
+- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
-- [Bun](https://bun.sh) (latest version)
+## Project Setup
 
-### Installation
+### Install
 
 ```bash
-bun install
+$ npm install
 ```
 
 ### Development
 
-To start the development server:
-
 ```bash
-bun run dev
+$ npm run dev
 ```
 
-### Building
-
-To build the application for production:
+### Build
 
 ```bash
-bun run build
+# For windows
+$ npm run build:win
+
+# For macOS
+$ npm run build:mac
+
+# For Linux
+$ npm run build:linux
 ```
-
-## Project Structure
-
-- `src/main`: Electron main process
-- `src/preload`: Electron preload scripts
-- `src/renderer`: React application (renderer process)
-  - `components`: Reusable UI components
-  - `store`: Zustand state management
-  - `types`: TypeScript type definitions
-  - `utils`: Utility functions
-
-## Features
-
-- 3D rendering with React Three Fiber
-- AI integration via OpenAI
