@@ -1,0 +1,41 @@
+{
+  "id": "shaderframe-editor-11",
+  "seq": "11",
+  "title": "Toolbar — Home, New Project, Text Tool, Theme Toggle",
+  "description": "Create the Toolbar component with: Home button (navigates to home/welcome screen), New Project button (resets ProjectStore), Text Tool button (creates a new text layer), and Theme toggle button (toggles light/dark via ThemeStore). Toolbar is a horizontal bar at the top or side of the editor layout.",
+  "status": "completed",
+  "depends_on": ["03", "04", "05", "07"],
+  "parallel": true,
+  "suggested_agent": "OpenFrontendSpecialist",
+  "context_files": [
+    "C:/Users/Dan/.opencode/context/ui/web/ui-styling-standards.md",
+    "C:/Users/Dan/.opencode/context/ui/web/react-patterns.md",
+    "C:/Users/Dan/.opencode/context/core/workflows/component-planning.md",
+    "C:/Users/Dan/.opencode/context/core/standards/code-quality.md"
+  ],
+  "reference_files": [
+    "src/renderer/src/stores/ThemeStore.ts",
+    "src/renderer/src/stores/ProjectStore.ts",
+    "src/renderer/src/stores/UIStore.ts",
+    "src/renderer/src/ui-library/index.ts"
+  ],
+  "acceptance_criteria": [
+    "Home button sets UIStore to home/welcome screen view",
+    "New Project button resets ProjectStore to fresh state",
+    "Text Tool button creates a new TextLayer in ProjectStore",
+    "Theme toggle button toggles ThemeStore (light/dark) with visual icon change",
+    "All buttons use IconButton from ui-library",
+    "Tooltip on hover for each button",
+    "Visual indication of active tool",
+    "Follows 4-stage design workflow",
+    "Responsive at all breakpoints"
+  ],
+  "deliverables": [
+    "src/renderer/src/components/Toolbar/Toolbar.tsx",
+    "src/renderer/src/components/Toolbar/index.ts"
+  ],
+  "estimated_complexity": "low",
+  "started_at": "2026-02-22T00:00:00Z",
+  "completed_at": "2026-02-22T00:00:00Z",
+  "completion_summary": "Toolbar with Home, New Project, Add Text Layer, and Theme toggle buttons. All using IconButton + Tooltip from ui-library. Theme toggle shows sun/moon icon. Typecheck passes."
+}

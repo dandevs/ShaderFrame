@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode toggle */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ─── Color Palette ─── */
+  /* Neutral grays (used for backgrounds, borders, text) */
+  --color-surface-50: oklch(0.985 0 0);
+  --color-surface-100: oklch(0.965 0 0);
+  --color-surface-200: oklch(0.925 0 0);
+  --color-surface-300: oklch(0.87 0 0);
+  --color-surface-400: oklch(0.7 0 0);
+  --color-surface-500: oklch(0.55 0 0);
+  --color-surface-600: oklch(0.4 0 0);
+  --color-surface-700: oklch(0.3 0 0);
+  --color-surface-800: oklch(0.22 0 0);
+  --color-surface-850: oklch(0.18 0 0);
+  --color-surface-900: oklch(0.15 0 0);
+  --color-surface-950: oklch(0.1 0 0);
+
+  /* Primary accent (blue) */
+  --color-primary-400: oklch(0.7 0.15 250);
+  --color-primary-500: oklch(0.6 0.18 250);
+  --color-primary-600: oklch(0.5 0.2 250);
+  --color-primary-700: oklch(0.42 0.18 250);
+
+  /* Success (green) */
+  --color-success-500: oklch(0.65 0.17 145);
+  --color-success-600: oklch(0.55 0.17 145);
+
+  /* Warning (amber) */
+  --color-warning-500: oklch(0.75 0.15 75);
+  --color-warning-600: oklch(0.65 0.15 75);
+
+  /* Danger (red) */
+  --color-danger-500: oklch(0.6 0.2 25);
+  --color-danger-600: oklch(0.5 0.2 25);
+
+  /* ─── Typography ─── */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  /* ─── Radius ─── */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* ─── Shadows ─── */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* ─── Animations ─── */
+  --animate-fade-in: fade-in 0.15s ease-out;
+  --animate-slide-in: slide-in 0.2s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ─── Base Styles ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Light mode defaults */
+  background-color: var(--color-surface-100);
+  color: var(--color-surface-900);
+}
+
+.dark body {
+  background-color: var(--color-surface-900);
+  color: var(--color-surface-100);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-primary-500);
+  color: white;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-400);
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-surface-600);
+}
+
+/* Focus ring utility */
+.focus-ring {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}

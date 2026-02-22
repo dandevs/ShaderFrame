@@ -1,0 +1,36 @@
+{
+  "id": "shaderframe-editor-02",
+  "seq": "02",
+  "title": "Core Types & Data Models — Layers, Shaders, Project, AI",
+  "description": "Define all TypeScript types and interfaces for the layer system (ImageLayer, TextLayer, GroupLayer), shader components (ShaderComponent, ShaderUniform with typed values), project format (serializable project metadata and layer tree), and AI service (AIProvider interface, ShaderResult, streaming types). These types form the foundation for all other subtasks.",
+  "status": "completed",
+  "agent_id": "coder-agent",
+  "depends_on": [],
+  "parallel": true,
+  "suggested_agent": "CoderAgent",
+  "context_files": [
+    "C:/Users/Dan/.opencode/context/core/standards/code-quality.md",
+    "C:/Users/Dan/.opencode/context/ui/web/react-patterns.md"
+  ],
+  "reference_files": ["package.json", "tsconfig.web.json", ".tmp/external-context/openrouter/"],
+  "acceptance_criteria": [
+    "Layer types defined: BaseLayer, ImageLayer, TextLayer, GroupLayer with discriminated union",
+    "ShaderComponent type with id, prompt, glslCode, uniforms array",
+    "ShaderUniform type with name, type enum (float, vec2, vec3, vec4, color, bool, enum), value, min, max, options",
+    "Project type with metadata and serializable layer tree",
+    "AIProvider interface with generateShader method signature",
+    "All types exported from index.ts barrel",
+    "TypeScript strict mode passes with no errors"
+  ],
+  "deliverables": [
+    "src/renderer/src/types/layers.ts",
+    "src/renderer/src/types/shader.ts",
+    "src/renderer/src/types/project.ts",
+    "src/renderer/src/types/ai.ts",
+    "src/renderer/src/types/index.ts"
+  ],
+  "estimated_complexity": "medium",
+  "started_at": "2026-02-22T00:00:00Z",
+  "completed_at": "2026-02-22T00:01:00Z",
+  "completion_summary": "Defined all core types: Layer hierarchy (discriminated union), ShaderComponent/Uniform, Project, AIProvider. All exports via barrel. Typecheck passes."
+}

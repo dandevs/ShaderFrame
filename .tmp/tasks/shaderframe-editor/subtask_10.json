@@ -1,0 +1,44 @@
+{
+  "id": "shaderframe-editor-10",
+  "seq": "10",
+  "title": "Prompt Chat — Inline Shader Generation Prompt with Edit Mode",
+  "description": "Create the PromptChat component that provides an inline prompt input for shader generation on the selected layer. Supports creation mode (new shader from prompt) and edit mode (re-open with existing prompt for modification). Shows generation status (idle, loading/streaming, error, success). Integrates with the AI service layer to generate shaders and with ProjectStore to apply results to layers.",
+  "status": "completed",
+  "depends_on": ["03", "04", "05", "07"],
+  "parallel": true,
+  "suggested_agent": "OpenFrontendSpecialist",
+  "context_files": [
+    "C:/Users/Dan/.opencode/context/ui/web/ui-styling-standards.md",
+    "C:/Users/Dan/.opencode/context/ui/web/react-patterns.md",
+    "C:/Users/Dan/.opencode/context/core/workflows/component-planning.md",
+    "C:/Users/Dan/.opencode/context/core/standards/code-quality.md"
+  ],
+  "reference_files": [
+    "src/renderer/src/types/shader.ts",
+    "src/renderer/src/types/ai.ts",
+    "src/renderer/src/stores/ProjectStore.ts",
+    "src/renderer/src/stores/UIStore.ts",
+    "src/renderer/src/services/ai/index.ts",
+    "src/renderer/src/ui-library/index.ts"
+  ],
+  "acceptance_criteria": [
+    "PromptChat renders inline prompt input below/within selected layer context",
+    "TextArea input for shader prompt with submit button",
+    "Create mode: empty prompt, submit generates new shader",
+    "Edit mode: pre-filled with existing prompt, submit regenerates shader",
+    "Status display: idle, loading (with streaming indicator), error (with message), success",
+    "Calls AI service generateShader and applies result to ProjectStore",
+    "Cancel button during generation",
+    "Error recovery with retry option",
+    "Follows 4-stage design workflow",
+    "Responsive at all breakpoints"
+  ],
+  "deliverables": [
+    "src/renderer/src/components/PromptChat/PromptChat.tsx",
+    "src/renderer/src/components/PromptChat/index.ts"
+  ],
+  "estimated_complexity": "medium",
+  "started_at": "2026-02-22T00:00:00Z",
+  "completed_at": "2026-02-22T00:00:00Z",
+  "completion_summary": "PromptChat with create/edit modes, streaming display, error handling with retry, cancel support, Ctrl+Enter submit, auto-focus, AI provider integration via OpenRouter. Typecheck passes."
+}

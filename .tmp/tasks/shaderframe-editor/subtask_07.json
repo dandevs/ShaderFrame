@@ -1,0 +1,41 @@
+{
+  "id": "shaderframe-editor-07",
+  "seq": "07",
+  "title": "AI Service Layer — Provider Abstraction, OpenRouter, Shader Prompts",
+  "description": "Create the AI service layer with a provider abstraction interface (AIProvider), an OpenRouterProvider implementation using fetch + SSE streaming, and shader prompt engineering templates. The OpenRouterProvider should handle authentication via Electron IPC (API key from safeStorage), streaming responses, error handling with retries, and parse structured shader output (GLSL code + uniform definitions).",
+  "status": "completed",
+  "agent_id": "coder-agent",
+  "started_at": "2026-02-22T00:00:00Z",
+  "depends_on": ["02", "05"],
+  "parallel": true,
+  "suggested_agent": "CoderAgent",
+  "context_files": ["C:/Users/Dan/.opencode/context/core/standards/code-quality.md"],
+  "reference_files": [
+    "package.json",
+    "src/renderer/src/types/ai.ts",
+    "src/renderer/src/types/shader.ts",
+    "src/renderer/index.html",
+    ".tmp/external-context/openrouter/"
+  ],
+  "acceptance_criteria": [
+    "AIProvider interface with generateShader(prompt, context) method",
+    "OpenRouterProvider implements AIProvider using fetch + SSE streaming",
+    "API key retrieved from Electron IPC (safeStorage)",
+    "SSE streaming with incremental response handling",
+    "Error handling with retry logic and exponential backoff",
+    "Shader prompt template produces structured output: GLSL code + uniform definitions",
+    "Response parser extracts ShaderComponent from AI output",
+    "Barrel index.ts exports provider and types",
+    "TypeScript strict mode passes with no errors"
+  ],
+  "deliverables": [
+    "src/renderer/src/services/ai/types.ts",
+    "src/renderer/src/services/ai/openrouter-provider.ts",
+    "src/renderer/src/services/ai/shader-prompt.ts",
+    "src/renderer/src/services/ai/index.ts"
+  ],
+  "estimated_complexity": "high",
+  "started_at": null,
+  "completed_at": "2026-02-22T00:00:00Z",
+  "completion_summary": "AI service layer with OpenRouterProvider, SSE streaming, retry/backoff, shader prompt engineering, response parser"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "shaderframe-editor-14",
+  "seq": "14",
+  "title": "AGENTS.md Updates — Root and Subdirectory Documentation",
+  "description": "Update the root AGENTS.md with the final project structure, component architecture, and development guidelines. Create AGENTS.md files in key subdirectories (ui-library, stores, services, components) documenting the conventions, patterns, and usage for each module. These files guide future AI agents working in those directories.",
+  "status": "completed",
+  "depends_on": ["13"],
+  "parallel": false,
+  "suggested_agent": "CoderAgent",
+  "context_files": ["C:/Users/Dan/.opencode/context/core/standards/code-quality.md"],
+  "reference_files": [
+    "AGENTS.md",
+    "src/renderer/src/ui-library/index.ts",
+    "src/renderer/src/stores/index.ts",
+    "src/renderer/src/services/ai/index.ts",
+    "src/renderer/src/components/Viewport/index.ts",
+    "src/renderer/src/components/Inspector/index.ts",
+    "src/renderer/src/components/LayerPanel/index.ts",
+    "src/renderer/src/components/Toolbar/index.ts",
+    "src/renderer/src/components/PromptChat/index.ts"
+  ],
+  "acceptance_criteria": [
+    "Root AGENTS.md updated with final project structure and architecture",
+    "src/renderer/src/ui-library/AGENTS.md documents component conventions, prop patterns, theming approach",
+    "src/renderer/src/stores/AGENTS.md documents MobX store patterns, serialization, observable rules",
+    "src/renderer/src/services/AGENTS.md documents AI provider abstraction, OpenRouter integration, prompt engineering",
+    "src/renderer/src/components/AGENTS.md documents component organization, naming, R3F patterns",
+    "Each AGENTS.md includes relevant imports, patterns, and dos/don'ts"
+  ],
+  "deliverables": [
+    "AGENTS.md",
+    "src/renderer/src/ui-library/AGENTS.md",
+    "src/renderer/src/stores/AGENTS.md",
+    "src/renderer/src/services/AGENTS.md",
+    "src/renderer/src/components/AGENTS.md"
+  ],
+  "estimated_complexity": "low",
+  "started_at": "2026-02-22T12:30:00Z",
+  "completed_at": "2026-02-22T13:00:00Z",
+  "completion_summary": "All AGENTS.md files written: root AGENTS.md fully updated with final architecture, plus subdirectory docs for ui-library/, stores/, services/, and components/."
+}

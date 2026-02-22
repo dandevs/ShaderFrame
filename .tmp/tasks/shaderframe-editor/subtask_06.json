@@ -1,0 +1,40 @@
+{
+  "id": "shaderframe-editor-06",
+  "seq": "06",
+  "title": "Electron IPC & Preload — File Dialog, API Key Storage, Project Save/Load",
+  "description": "Add IPC handlers to the Electron main process for: file open dialog (image import), API key storage using Electron safeStorage, project save/load to filesystem. Update the preload script to expose these APIs via contextBridge. Update type declarations for the exposed API. Ensure contextIsolation is maintained.",
+  "status": "completed",
+  "agent_id": "coder-agent",
+  "depends_on": ["01", "02"],
+  "parallel": true,
+  "suggested_agent": "CoderAgent",
+  "context_files": ["C:/Users/Dan/.opencode/context/core/standards/code-quality.md"],
+  "reference_files": [
+    "package.json",
+    "src/main/index.ts",
+    "src/preload/index.ts",
+    "src/renderer/index.html",
+    "src/renderer/src/types/project.ts"
+  ],
+  "acceptance_criteria": [
+    "IPC handler: dialog:openFile opens native file dialog for images (png, jpg, webp)",
+    "IPC handler: safeStorage:setApiKey encrypts and stores API key",
+    "IPC handler: safeStorage:getApiKey retrieves and decrypts API key",
+    "IPC handler: project:save writes project JSON to filesystem with save dialog",
+    "IPC handler: project:load reads project JSON from filesystem with open dialog",
+    "Preload script exposes all handlers via contextBridge.exposeInMainWorld",
+    "Type declarations updated in index.d.ts for window.electronAPI",
+    "contextIsolation remains enabled",
+    "TypeScript strict mode passes with no errors"
+  ],
+  "deliverables": [
+    "src/main/ipc-handlers.ts",
+    "src/main/index.ts",
+    "src/preload/index.ts",
+    "src/preload/index.d.ts"
+  ],
+  "estimated_complexity": "medium",
+  "started_at": "2026-02-22T00:00:00Z",
+  "completed_at": "2026-02-22T00:00:00Z",
+  "completion_summary": "IPC handlers for file dialog, API key safeStorage, project save/load with typed preload API"
+}

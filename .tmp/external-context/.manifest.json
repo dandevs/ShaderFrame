@@ -1,0 +1,84 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-02-22T00:00:00Z",
+  "libraries": {
+    "tailwindcss": {
+      "files": [
+        {
+          "filename": "v4-installation-vite.md",
+          "topic": "Installation with Vite (@tailwindcss/vite plugin)",
+          "tech_stack": "Vite / Electron",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "v4-css-configuration.md",
+          "topic": "CSS-based configuration (@theme directive, replaces tailwind.config.js)",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "v4-dark-mode.md",
+          "topic": "Dark mode and theme setup (@custom-variant)",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "v4-css-custom-properties.md",
+          "topic": "CSS custom properties integration and native CSS features",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "v4-breaking-changes-from-v3.md",
+          "topic": "Complete breaking changes guide from v3 to v4",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        }
+      ]
+    },
+    "openrouter": {
+      "files": [
+        {
+          "filename": "api-overview-and-authentication.md",
+          "topic": "API overview, base URL, authentication, SDK options",
+          "tech_stack": "General (Node.js, Python, curl)",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "chat-completions-request-response.md",
+          "topic": "Chat completions request/response schema, messages, tools, structured outputs",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "streaming-sse.md",
+          "topic": "Streaming responses, SSE format, stream cancellation, error handling during streaming",
+          "tech_stack": "General (TypeScript, Python)",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "models-listing.md",
+          "topic": "Models listing API, model ID format, model variants, model routing, fallbacks",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        },
+        {
+          "filename": "rate-limits-and-errors.md",
+          "topic": "Rate limiting, error codes, error response format, debugging, retry patterns",
+          "tech_stack": "General",
+          "fetched": "2026-02-22T00:00:00Z",
+          "source": "Official docs"
+        }
+      ]
+    }
+  }
+}

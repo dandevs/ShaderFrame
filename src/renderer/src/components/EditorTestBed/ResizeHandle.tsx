@@ -9,7 +9,7 @@ import { createDragHandler } from './createDragHandler'
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** World-unit side length of each square corner handle. */
-export const HANDLE_SIZE = 0.12
+export const HANDLE_SIZE = 0.2
 /** Thickness of edge handles (the short/thin dimension). */
 const HANDLE_EDGE_THICKNESS = HANDLE_SIZE * 0.45
 /** Z offset so handles sit above the parent plane. */

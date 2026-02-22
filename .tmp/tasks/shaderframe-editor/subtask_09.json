@@ -1,0 +1,61 @@
+{
+  "id": "shaderframe-editor-09",
+  "seq": "09",
+  "title": "Inspector Panel — Unity3D-Style Property Inspector with Field Renderers",
+  "description": "Create the Inspector Panel with Unity3D-style variable renderers for shader component uniforms. Implement field components for each type: FloatField (slider + input), Vec2Field, Vec3Field, Vec4Field (multi-input), ColorField (color picker), BoolField (checkbox), EnumField (select). Add a ShaderComponentHeader with component name and 'Edit' button that triggers prompt re-editing. Inspector shows fields for the selected layer's shader components.",
+  "status": "completed",
+  "depends_on": ["03", "04", "05", "07"],
+  "parallel": true,
+  "suggested_agent": "OpenFrontendSpecialist",
+  "context_files": [
+    "C:/Users/Dan/.opencode/context/ui/web/ui-styling-standards.md",
+    "C:/Users/Dan/.opencode/context/ui/web/react-patterns.md",
+    "C:/Users/Dan/.opencode/context/ui/web/design-systems.md",
+    "C:/Users/Dan/.opencode/context/core/workflows/component-planning.md",
+    "C:/Users/Dan/.opencode/context/core/standards/code-quality.md"
+  ],
+  "reference_files": [
+    "src/renderer/src/types/shader.ts",
+    "src/renderer/src/types/layers.ts",
+    "src/renderer/src/stores/ProjectStore.ts",
+    "src/renderer/src/stores/UIStore.ts",
+    "src/renderer/src/ui-library/index.ts",
+    "src/renderer/src/ui-library/Slider.tsx",
+    "src/renderer/src/ui-library/ColorPicker.tsx",
+    "src/renderer/src/ui-library/Checkbox.tsx",
+    "src/renderer/src/ui-library/Select.tsx",
+    "src/renderer/src/ui-library/Input.tsx"
+  ],
+  "acceptance_criteria": [
+    "Inspector renders shader component uniforms for selected layer",
+    "FloatField: slider + numeric input with min/max/step",
+    "Vec2Field: two labeled float inputs (x, y)",
+    "Vec3Field: three labeled float inputs (x, y, z)",
+    "Vec4Field: four labeled float inputs (x, y, z, w)",
+    "ColorField: color picker integration from ui-library",
+    "BoolField: checkbox toggle",
+    "EnumField: select dropdown with defined options",
+    "ShaderComponentHeader shows component name and 'Edit' button",
+    "Edit button triggers prompt re-editing mode (sets UIStore state)",
+    "All field changes update MobX store reactively",
+    "Follows 4-stage design workflow",
+    "Responsive at all breakpoints"
+  ],
+  "deliverables": [
+    "src/renderer/src/components/Inspector/Inspector.tsx",
+    "src/renderer/src/components/Inspector/fields/FloatField.tsx",
+    "src/renderer/src/components/Inspector/fields/Vec2Field.tsx",
+    "src/renderer/src/components/Inspector/fields/Vec3Field.tsx",
+    "src/renderer/src/components/Inspector/fields/Vec4Field.tsx",
+    "src/renderer/src/components/Inspector/fields/ColorField.tsx",
+    "src/renderer/src/components/Inspector/fields/BoolField.tsx",
+    "src/renderer/src/components/Inspector/fields/EnumField.tsx",
+    "src/renderer/src/components/Inspector/fields/index.ts",
+    "src/renderer/src/components/Inspector/ShaderComponentHeader.tsx",
+    "src/renderer/src/components/Inspector/index.ts"
+  ],
+  "estimated_complexity": "high",
+  "started_at": "2026-02-22T00:00:00Z",
+  "completed_at": "2026-02-22T00:00:00Z",
+  "completion_summary": "Inspector panel with 7 field renderers (Float, Vec2, Vec3, Vec4, Color, Bool, Enum), UniformField dispatcher, ShaderComponentHeader with edit/remove/enable toggle, layer info panel. All using existing ui-library components. Typecheck passes."
+}
