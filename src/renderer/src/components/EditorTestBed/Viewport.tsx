@@ -291,7 +291,6 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
       // ── Frame loop ────────────────────────────────────────────────────
       try {
         await run(() => {
-          console.log("ok");
           // Handles live in scene/world space, so we compute their positions
           // directly from the target's world position + scaled half-extents.
           // This way the plane's own scale never affects handle size.
@@ -309,6 +308,7 @@ export function ResizeHandle({ meshRef }: { meshRef: RefObject<Mesh> }): null {
         })
       } finally {
         // ── Cleanup on unmount ────────────────────────────────────────────
+        console.log("unmount");
         cleanupDrag()
         for (const mesh of handles) sceneParent.remove(mesh)
         for (const mat of materials) mat.dispose()

@@ -1,5 +1,5 @@
-import { RootState, useFrame, useThree } from '@react-three/fiber'
-import { useMemo, useEffect } from 'react'
+import { RootState, useFrame } from '@react-three/fiber'
+import { useRef, useEffect } from 'react'
 
 /**
  * Enhances any Three.js object that has a `.dispose()` method with
@@ -66,32 +66,37 @@ export function useThreeScoped(
     run: (action: (delta: number) => void) => Promise<void>
   ) => void | Promise<void>
 ): void {
-  const state = useThree()
-  const controller = useMemo(() => new AbortController(), [])
+  const frameActionRef = useRef<((delta: number) => void) | null>(null)
+  const resolveRunRef = useRef<(() => void) | null>(null)
+  const startedRef = useRef(false)
 
-  const behavior = useMemo(
-    () => (run: (action: (delta: number) => void) => Promise<void>) => {
-      return callback(state, run)
-    },
-    // state is a stable store reference from useThree – safe to dep on
-    [callback, state]
-  )
+  // Cleanup on unmount: stop frame action and resolve the pending run()
+  // promise so the callback's finally block runs as a microtask.
+  useEffect(() => {
+    return () => {
+      startedRef.current = false
+      frameActionRef.current = null
+      resolveRunRef.current?.()
+      resolveRunRef.current = null
+    }
+  }, [])
 
-  const runner = useMemo(() => {
-    let useFrameFunc: (_state: RootState, delta: number) => void = null!
+  // useFrame provides fresh RootState on every tick – the camera is always
+  // the current default, even after <OrthographicCamera makeDefault />.
+  useFrame((state, delta) => {
+    // Start the callback exactly once, on the first frame after mount,
+    // so `state` is guaranteed to reflect the fully committed scene.
+    if (!startedRef.current) {
+      startedRef.current = true
+      const run = (action: (delta: number) => void): Promise<void> => {
+        frameActionRef.current = action
+        return new Promise<void>((resolve) => {
+          resolveRunRef.current = resolve
+        })
+      }
+      callback(state, run)
+    }
 
-    behavior((run) => {
-      return new Promise((resolve) => {
-        useFrameFunc = (_state, delta) => {
-          if (!controller.signal.aborted) run(delta)
-          else resolve()
-        }
-      })
-    })
-
-    return useFrameFunc
-  }, [behavior, controller])
-
-  useEffect(() => () => controller.abort(), [controller])
-  useFrame(runner)
+    frameActionRef.current?.(delta)
+  })
 }
