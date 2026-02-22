@@ -1,23 +1,23 @@
-import { RootState, useFrame } from '@react-three/fiber'
+import { RootState, useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useEffect } from 'react'
-import { BufferGeometry } from 'three'
 
 /**
- * Enhances a Three.js object with disposable resource management support.
+ * Enhances any Three.js object that has a `.dispose()` method with
+ * `Symbol.dispose` support, enabling use of the `using` keyword for
+ * automatic cleanup when the resource goes out of scope.
  *
- * This function adds a `Symbol.dispose` method to Three.js buffer geometries,
- * enabling them to be used with JavaScript's `using` keyword for automatic
- * cleanup. When the resource goes out of scope, the object's `dispose()` method
- * is called to free GPU memory and other resources.
+ * Works with any Three.js type that is disposable: `BufferGeometry`,
+ * `Material`, `Texture`, `RenderTarget`, `WebGLRenderer`, etc.
  *
- * @param obj - The Three.js BufferGeometry to make disposable
- * @returns The same object with disposable capabilities added
+ * @param obj - Any Three.js object with a `dispose()` method
+ * @returns The same object with `Symbol.dispose` added
  *
  * @example
  * ```tsx
  * useThreeScoped(async (run) => {
  *   using geometry = withThreeDispose(new BoxGeometry(1, 1, 1))
- *   // geometry.dispose() will be called automatically when scope exits
+ *   using material = withThreeDispose(new MeshBasicMaterial())
+ *   // Both are disposed automatically when the scope exits
  *
  *   await run((state, delta) => {
  *     geometry.rotateY(delta * 0.5)
@@ -25,7 +25,7 @@ import { BufferGeometry } from 'three'
  * })
  * ```
  */
-export function withThreeDispose<T extends BufferGeometry>(obj: T): T & Disposable {
+export function withThreeDispose<T extends { dispose(): void }>(obj: T): T & Disposable {
   const disposable = obj as T & Disposable
   const prevDispose = obj[Symbol.dispose]
 
@@ -50,10 +50,11 @@ export function withThreeDispose<T extends BufferGeometry>(obj: T): T & Disposab
  *
  * @example
  * ```tsx
- * useThreeScoped(async (run) => {
+ * useThreeScoped(async (state, run) => {
  *   using geometry = withThreeDispose(new BoxGeometry(1, 1, 1))
+ *   // state.gl, state.camera etc. are available here immediately
  *
- *   await run((state, delta) => {
+ *   await run((delta) => {
  *     geometry.rotateY(delta * 0.5)
  *   })
  * })
@@ -61,25 +62,28 @@ export function withThreeDispose<T extends BufferGeometry>(obj: T): T & Disposab
  */
 export function useThreeScoped(
   callback: (
-    run: (action: (state: RootState, delta: number) => void) => Promise<void>
+    state: RootState,
+    run: (action: (delta: number) => void) => Promise<void>
   ) => void | Promise<void>
 ): void {
+  const state = useThree()
   const controller = useMemo(() => new AbortController(), [])
 
   const behavior = useMemo(
-    () => (run: (action: (state: RootState, delta: number) => void) => Promise<void>) => {
-      return callback(run)
+    () => (run: (action: (delta: number) => void) => Promise<void>) => {
+      return callback(state, run)
     },
-    [callback]
+    // state is a stable store reference from useThree – safe to dep on
+    [callback, state]
   )
 
   const runner = useMemo(() => {
-    let useFrameFunc: (state: RootState, delta: number) => void = null!
+    let useFrameFunc: (_state: RootState, delta: number) => void = null!
 
     behavior((run) => {
       return new Promise((resolve) => {
-        useFrameFunc = (state, delta) => {
-          if (!controller.signal.aborted) run(state, delta)
+        useFrameFunc = (_state, delta) => {
+          if (!controller.signal.aborted) run(delta)
           else resolve()
         }
       })
