@@ -51,27 +51,6 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Component files: `ComponentName.tsx`
 - Use TanStack ecosystem (Router, Query, etc.) for React hooks and data management
 
-### File Naming
-- Components: PascalCase - `CanvasEditor.tsx`, `LayersPanel.tsx`
-- Utilities/hooks: camelCase - `useImageLoader.ts`, `formatImage.ts`
-- Types/interfaces: PascalCase - `LayerTypes.ts`, `ShaderLibrary.ts`
-- Constants: UPPER_SNAKE_CASE - `API_ENDPOINTS.ts`
-- Services: camelCase - `imageOptimizer.ts`, `openAIClient.ts`
-
-### Electron Architecture
-- Main process: `src/main/` - Node.js APIs, IPC handlers
-- Renderer process: `src/renderer/` - React app, no direct Node.js access
-- Preload: `src/preload/` - Secure bridge via contextBridge
-- Always use contextIsolation in browser window config
-- Expose minimal API via contextBridge: `electronAPI.openFile()`
-
-### Error Handling
-- Use try/catch for async operations with proper error logging
-- Create custom error types: `class AIError extends Error { ... }`
-- Display user-friendly errors in UI, log details to console/electron-log
-- Wrap external API calls with error boundaries
-- Use Sentry or similar for error tracking in production
-
 ### React Three Fiber
 - **Reference**:
 - **Always check [React Three Fiber & Drei Documentation](thirdparty/docs/AGENTS.md)** for up-to-date API usage and proper patterns
@@ -95,10 +74,3 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Sanitize all user inputs before processing
 - Validate IPC messages with zod or similar
 - Keep dependencies updated regularly
-
-### Performance
-- Generate thumbnails for large images
-- Use Web Workers for heavy image processing
-- Implement lazy loading for layer panels and image lists
-- Optimize images on import (Sharp for compression)
-- Profile memory usage in devtools before shipping features
