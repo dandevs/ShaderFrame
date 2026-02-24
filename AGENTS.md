@@ -51,16 +51,6 @@ bun run test:unit <pattern>   # Run single test file matching pattern
 - Component files: `ComponentName.tsx`
 - Use TanStack ecosystem (Router, Query, etc.) for React hooks and data management
 
-### React Three Fiber
-- **Reference**:
-- **Always check [React Three Fiber & Drei Documentation](thirdparty/docs/AGENTS.md)** for up-to-date API usage and proper patterns
-- Use `frameloop="demand"` for static scenes to save resources
-- Memoize geometries, materials, lights with useMemo
-- Use `useFrame` for animations, mutating values directly
-- Import from `@react-three/fiber` and `@react-three/drei`
-- Dispose Three.js objects manually when unmounting if needed
-- **Before implementing new R3F/Drei features, consult the official docs** at `thirdparty/docs/AGENTS.md` for correct API usage and examples
-
 ### API Integration (OpenAI)
 - Store API keys in Electron safeStorage, never in env files or renderer
 - Implement rate limiting and retry logic with exponential backoff

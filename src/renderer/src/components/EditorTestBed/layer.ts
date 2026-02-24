@@ -1,10 +1,14 @@
-import { observable } from 'mobx'
+import { autorun, IReactionDisposer, makeObservable, observable } from 'mobx'
 import * as THREE from 'three'
 
 export class Layer {
-  children: Layer[] = []
+  @observable
+  public children: Layer[] = []
   #dirty: boolean = true
   #texture: THREE.Texture | null = null
+  #mesh: THREE.Mesh;
+  #material: THREE.MeshBasicMaterial
+  public transform: TransformComponent
 
   public get dirty() {
     return this.#dirty
@@ -14,7 +18,39 @@ export class Layer {
     return this.#texture
   }
 
-  public render(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer): THREE.Texture {
+  public get mesh() {
+    return this.#mesh
+  }
+
+  constructor() {
+    makeObservable(this)
+    this.#material = new THREE.MeshBasicMaterial({ color: 0x777777, map: this.#texture })
+    this.#mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.#material)
+    this.#mesh.userData.layer = this
+    this.transform = new TransformComponent(this)
+  }
+
+  public onSelectBegin() {
+
+  }
+
+  public onSelected(_delta: number) {
+
+  }
+
+  public onSelectEnd() {
+
+  }
+
+  public setSelected(selected: boolean) {
+    this.#material.color.setHex(selected ? 0xffd54f : 0x777777)
+  }
+
+  public addChild(layer: Layer) {
+    this.children.push(layer)
+  }
+
+  public updateTexture(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer): THREE.Texture {
     // if neither this layer nor any child is dirty, return cached texture
     const childDirty = this.children.some((c) => c.dirty)
     if (!this.#dirty && !childDirty && this.#texture != null) {
@@ -33,7 +69,7 @@ export class Layer {
     // are generated.  we then blit them onto the same render target at (0,0).
     // overlapping or out-of-bounds pixels are fine, they will simply clip.
     for (const child of this.children) {
-      const childTex = child.render(scene, camera, renderer)
+      const childTex = child.updateTexture(scene, camera, renderer)
 
       if (childTex) {
         renderer.copyTextureToTexture(
@@ -56,6 +92,12 @@ export class Layer {
   }
 
   [Symbol.dispose]() {
+    const disposeTransform = (this.transform as any)[Symbol.dispose]
+
+    if (disposeTransform) {
+      disposeTransform.call(this.transform)
+    }
+
     // release our own texture if present
     if (this.#texture) {
       this.#texture.dispose()
@@ -91,11 +133,15 @@ export type FieldType =
 
 class Component {
   public fields: ComponentField<any>[] = [];
-  constructor(public layer: Layer) {}
+  readonly layer: Layer;
+
+  constructor(layer: Layer) {
+    this.layer = layer;
+  }
 }
 
 class ComponentField<T> {
-  @observable public value: T;
+  public value: T;
   public name: string;
   public type: FieldType;
 
@@ -104,9 +150,46 @@ class ComponentField<T> {
     value: T,
     type: FieldType,
   ) {
+    makeObservable(this)
     this.name = name;
     this.value = value;
     this.type = type;
   }
 }
 
+export class TransformComponent extends Component {
+  @observable position: [number, number] = [0, 0];
+  @observable scale: [number, number] = [1, 1];
+
+  #dispose: IReactionDisposer;
+
+  constructor(layer: Layer) {
+    super(layer);
+    makeObservable(this)
+
+    this.#dispose = autorun(() => {
+      const [x, y] = this.position;
+      const [width, height] = this.scale;
+
+      this.layer.mesh.position.set(x, y, 0);
+      this.layer.mesh.scale.set(width, height, 1);
+    })
+  }
+
+  public setPosition(x: number, y: number) {
+    this.position = [x, y]
+  }
+
+  public setScale(width: number, height: number) {
+    this.scale = [width, height]
+  }
+
+  public setTransform(x: number, y: number, width: number, height: number) {
+    this.position = [x, y]
+    this.scale = [width, height]
+  }
+
+  [Symbol.dispose]() {
+    this.#dispose()
+  }
+}
